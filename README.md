@@ -8,6 +8,36 @@ Inspirado em pesquisas de desenvolvimento infantil, neuropsicologia, diretrizes 
 
 ---
 
+## 📸 Imagens do Jogo
+
+Capturas reais do capítulo jogável **A Porta Fechada**.
+
+### Tela inicial
+
+Menu para iniciar a história, consultar memórias e ajustar a experiência.
+
+![Tela inicial de Entre Laços com os botões Nova história, Modo Família, Memórias e Configurações](docs/images/tela-inicial.png)
+
+### Escolhas de Alex
+
+Na perspectiva do cuidador, cada resposta afeta o vínculo e registra memórias da relação.
+
+![Cena de Alex diante da porta fechada, com quatro opções de resposta à adolescente](docs/images/escolhas-alex.png)
+
+### A perspectiva de Lia
+
+A história muda para o interior do quarto, revelando os pensamentos e sentimentos de Lia.
+
+![Perspectiva de Lia dentro do quarto, com diálogo, pensamento interno e escolhas](docs/images/perspectiva-lia.png)
+
+### Configurações de acessibilidade
+
+Controles de tamanho de texto, contraste, velocidade dos diálogos, indicadores sonoros e movimento.
+
+![Janela de configurações com opções de leitura, alto contraste e redução de animações](docs/images/acessibilidade.png)
+
+---
+
 ## 🎯 Pilares Centrais do Projeto
 
 1. **Duas Perspectivas:** Intenção e impacto coexistem. Uma atitude pensada como proteção pode ser sentida como invasão ou desamparo.
