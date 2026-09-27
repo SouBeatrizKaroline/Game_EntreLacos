@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, Sparkles, BookOpen, AlertCircle, HeartHandshake } from 'lucide-react';
 import { SceneNode, GameState, SceneChoice } from '../../types';
 import { getBehavioralCues } from '../../engine/relationshipManager';
@@ -19,11 +19,12 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTypingComplete, setIsTypingComplete] = useState(false);
+  const typingTimer = useRef<ReturnType<typeof setInterval>>();
 
   // Efeito de digitação com controle de velocidade de acessibilidade
   useEffect(() => {
     const fullText = scene.dialogue || '';
-    if (state.accessibility.textSpeed === 'instant') {
+    if (state.accessibility.textSpeed === 'instant' || state.accessibility.reducedMotion || !fullText) {
       setDisplayedText(fullText);
       setIsTypingComplete(true);
       return;
@@ -43,15 +44,19 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         setIsTypingComplete(true);
       }
     }, speedMs);
+    typingTimer.current = timer;
 
     return () => clearInterval(timer);
-  }, [scene.id, scene.dialogue, state.accessibility.textSpeed]);
+  }, [scene.id, scene.dialogue, state.accessibility.textSpeed, state.accessibility.reducedMotion]);
 
   // Atalhos de teclado (1, 2, 3, 4) para escolhas
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat || e.ctrlKey || e.altKey || e.metaKey || document.querySelector('[aria-modal="true"]')) return;
+      if (e.target instanceof HTMLElement && (e.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))) return;
       const num = parseInt(e.key, 10);
       if (num >= 1 && num <= availableChoices.length) {
+        e.preventDefault();
         onMakeChoice(availableChoices[num - 1]);
       }
     };
@@ -90,7 +95,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
       </div>
 
       {/* 2. Banner de Transição de Perspectiva ou Eco */}
-      {scene.isEchoSequence && (
+      {(scene.isEchoSequence || scene.perspective === 'echo_past') && (
         <div
           className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 shadow-sm"
           role="region"
@@ -191,9 +196,9 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         {scene.dialogue && (
           <div
             className="text-base sm:text-lg text-navy font-serif leading-relaxed"
-            aria-live="polite"
           >
-            “{displayedText}”
+            <span aria-hidden="true">“{displayedText}”</span>
+            <span className="sr-only" aria-live="polite">“{scene.dialogue}”</span>
           </div>
         )}
 
@@ -250,6 +255,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
           <div className="text-center">
             <button
               onClick={() => {
+                clearInterval(typingTimer.current);
                 setDisplayedText(scene.dialogue || '');
                 setIsTypingComplete(true);
               }}

@@ -84,6 +84,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 settings.highContrast ? 'bg-terracotta' : 'bg-warm-300'
               }`}
               role="switch"
+              aria-label="Modo Alto Contraste"
               aria-checked={settings.highContrast}
             >
               <div
@@ -134,6 +135,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 settings.soundIndicators ? 'bg-terracotta' : 'bg-warm-300'
               }`}
               role="switch"
+              aria-label="Legendas e Indicadores Sonoros"
               aria-checked={settings.soundIndicators}
             >
               <div
@@ -158,6 +160,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 settings.reducedMotion ? 'bg-terracotta' : 'bg-warm-300'
               }`}
               role="switch"
+              aria-label="Reduzir Animações"
               aria-checked={settings.reducedMotion}
             >
               <div
@@ -184,6 +187,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 settings.dyslexicFont ? 'bg-terracotta' : 'bg-warm-300'
               }`}
               role="switch"
+              aria-label="Tipografia para Dislexia"
               aria-checked={settings.dyslexicFont}
             >
               <div

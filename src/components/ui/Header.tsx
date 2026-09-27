@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="w-full bg-warm-100/90 backdrop-blur border-b border-warm-200 px-4 py-3 sticky top-0 z-30 transition-colors">
-      <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+      <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
         {/* Logo / Título */}
         <div className="flex items-center gap-3">
           {onGoHome && (
@@ -119,14 +119,14 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Narrative Debug Panel Toggle (Modo DEV) */}
-          <button
+          {import.meta.env.DEV && <button
             onClick={onToggleDebug}
             className="p-2 rounded-lg hover:bg-warm-200 text-navy/50 hover:text-navy transition-colors"
             title="Painel de Debug Narrativo"
             aria-label="Alternar painel de testes narrativos"
           >
             <Terminal className="w-4 h-4" />
-          </button>
+          </button>}
         </div>
       </div>
     </header>

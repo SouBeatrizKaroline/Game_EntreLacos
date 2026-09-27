@@ -18,7 +18,7 @@ import { CHAPTER_DOOR_13_SCENES } from '../content/chapters/door_13';
 import { GameState, SceneChoice } from '../types';
 
 export const App: React.FC = () => {
-  const [state, setState] = useState<GameState>(stateManager.getState());
+  const [state, setState] = useState<GameState>(() => stateManager.getState());
   const [screen, setScreen] = useState<'home' | 'game' | 'reflection'>('home');
 
   // Modais
@@ -29,6 +29,30 @@ export const App: React.FC = () => {
   const [isMemoriesModalOpen, setIsMemoriesModalOpen] = useState(false);
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const [isDebugOpen, setIsDebugOpen] = useState(false);
+
+  // Keep keyboard navigation inside the active dialog and restore focus on close.
+  useEffect(() => {
+    const dialogs = document.querySelectorAll<HTMLElement>('[aria-modal="true"]');
+    const dialog = dialogs[dialogs.length - 1];
+    if (!dialog) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const controls = () => Array.from(dialog.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex="0"]'));
+    controls()[0]?.focus();
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        controls()[0]?.click();
+      }
+      if (event.key !== 'Tab') return;
+      const items = controls();
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => { document.removeEventListener('keydown', handleKey); if (previousFocus?.isConnected) previousFocus.focus(); };
+  }, [activeEducationalCardId, isSafetyModalOpen, isSettingsModalOpen, isFamilyModeModalOpen, isMemoriesModalOpen, isAboutModalOpen]);
 
   // Inscrição no StateManager
   useEffect(() => {
@@ -42,6 +66,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     const a11y = state.accessibility;
     const body = document.body;
+    document.documentElement.style.fontSize = ({ sm: '14px', normal: '16px', large: '18.4px', 'extra-large': '20.8px' })[a11y.fontSize];
 
     // Classe de fonte
     body.classList.remove('font-size-sm', 'font-size-normal', 'font-size-large', 'font-size-extra-large');
@@ -217,7 +242,7 @@ export const App: React.FC = () => {
         <SettingsModal
           settings={state.accessibility}
           onUpdateSettings={(newSettings) => stateManager.updateAccessibility(newSettings)}
-          onResetGame={() => stateManager.resetGame()}
+          onResetGame={() => { stateManager.clearAll(); setScreen('home'); }}
           onClose={() => setIsSettingsModalOpen(false)}
         />
       )}
@@ -238,7 +263,7 @@ export const App: React.FC = () => {
       )}
 
       {/* Painel de Debug Narrativo para desenvolvedores e QA */}
-      {isDebugOpen && (
+      {import.meta.env.DEV && isDebugOpen && (
         <NarrativeDebugPanel
           state={state}
           onJumpToScene={(sceneId) => {

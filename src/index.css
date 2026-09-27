@@ -25,6 +25,25 @@
     border-color: #ffffff !important;
   }
 
+  body.high-contrast #root * {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  body.high-contrast #root button,
+  body.high-contrast #root a {
+    color: #ffde59 !important;
+  }
+
+  body.high-contrast #root button[aria-checked='true'] {
+    outline: 2px solid #ffde59;
+  }
+
+  body.dyslexic-font #root * {
+    font-family: inherit !important;
+  }
+
   body.high-contrast a,
   body.high-contrast button {
     outline-color: #ffde59 !important;
